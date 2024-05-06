@@ -18,7 +18,10 @@ const AddTodo = () => {
   const [status, setStatus] = React.useState("pending");
   const [isLoading, setIsLoading] = React.useState(false);
   const toast = useToast();
-  const { isLoggedIn, used } = useAuth();
+  const { isLoggedIn, user } = useAuth();
+
+  // * Todo create function
+
   const handleTodoCreate = async () => {
     if (!isLoggedIn) {
       toast({
@@ -28,21 +31,21 @@ const AddTodo = () => {
         isClosable: true,
       });
       return;
+    } else {
+      setIsLoading(true);
+      const todo = {
+        title,
+        description,
+        status,
+        userId: user.uid,
+      };
+      await addTodo(todo);
+      setIsLoading(false);
+      setTitle("");
+      setDescription("");
+      setStatus("pending");
+      toast({ title: "Todo created successfully", status: "success" });
     }
-
-    setIsLoading(true);
-    const todo = {
-      title,
-      description,
-      status,
-      userrId: user.uid,
-    };
-    await addTodo(todo);
-    setIsLoading(false);
-    setTitle("");
-    setDescription("");
-    setStatus("pending");
-    toast({ title: "Todo created successfully", status: "success" });
   };
 
   return (
@@ -64,7 +67,7 @@ const AddTodo = () => {
             style={{ color: "yellow", fontWeight: "bold" }}
           >
             Pending ⌛
-          </option>{" "}
+          </option>
           <option
             value={"completed"}
             style={{ color: "greren", fontWeight: "bold" }}
@@ -79,8 +82,7 @@ const AddTodo = () => {
           color={"white"}
           bg={"teal.400"}
         >
-          {" "}
-          Add{" "}
+          Add
         </Button>
       </Stack>
     </Box>
